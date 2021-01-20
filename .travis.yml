@@ -5,3 +5,4 @@ xcode_scheme: SwiftLabTests
 xcode_destination: platform=macOS
 script:
   - set -o pipefail && xcodebuild -scheme SwiftLabTests test | xcpretty
+  - set -o pipefail && xcodebuild -scheme SwiftLabUITests test | xcpretty

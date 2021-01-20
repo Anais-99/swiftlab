@@ -11,3 +11,4 @@ jobs:
       - run: ls -l /Applications
       - run: sudo xcode-select -s /Applications/Xcode_12.2.app
       - run: set -o pipefail && xcodebuild test -scheme SwiftLabTests | xcpretty
+      - run: set -o pipefail && xcodebuild test -scheme SwiftLabUITests | xcpretty
