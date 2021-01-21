@@ -15,4 +15,5 @@ jobs:
       - run: git remote remove sync || true
       - run: git remote add --mirror=push sync ${{secrets.SYNC_REMOTE}}
       - run: echo "${{secrets.SYNC_REMOTE_KEYSCAN}}" >> ~/.ssh/known_hosts
+      - run: git fetch origin
       - run: git push sync
