@@ -28,8 +28,7 @@ jobs:
       - uses: octokit/request-action@v2.x
         id: merge_dmz_in_master
         with:
-          route: POST /repos/{repo_path}/merges
-          repo_path: ${{github.repository}}
+          route: POST /repos/${{github.repository}}/merges
           base: master
           head: dmz
           mediaType: | # The | is significant!
@@ -42,8 +41,7 @@ jobs:
       - run: echo "::debug::${{steps.merge_dmz_in_master.outputs.data}}"
       - uses: octokit/request-action@v2.x
         with:
-          route: POST /repos/{repo_path}/check-runs
-          repo_path: ${{github.repository}}
+          route: POST /repos/${{github.repository}}/check-runs
           name: DMZ merge
           head_sha: ${{fromJSON(steps.merge_dmz_in_master.outputs.data).sha}}
         env:
