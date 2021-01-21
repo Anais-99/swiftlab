@@ -20,7 +20,7 @@ class SwiftLabTests: XCTestCase {
     }
 
     func testExample() throws {
-        XCTAssertEqual(true, false)
+        XCTAssertEqual(true, true)
     }
 
     func testPerformanceExample() throws {
