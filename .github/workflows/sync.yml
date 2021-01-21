@@ -9,11 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          known_hosts: ${{secrets.SYNC_REMOTE_KEYSCAN}}
       - uses: webfactory/ssh-agent@v0.4.1
         with:
           ssh-private-key: ${{secrets.SYNC_PRIVATE_KEY}}
       - run: git remote remove sync || true
       - run: git remote add --mirror=push sync ${{secrets.SYNC_REMOTE}}
-      - run: echo "${{secrets.SYNC_REMOTE_KEYSCAN}}" >> ~/.ssh/known_hosts
-      - run: git fetch origin
       - run: git push sync
