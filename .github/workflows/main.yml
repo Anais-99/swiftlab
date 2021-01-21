@@ -31,9 +31,6 @@ jobs:
           route: POST /repos/${{github.repository}}/merges
           base: master
           head: dmz
-          mediaType: | # The | is significant!
-            previews:
-              - antiope
         env:
           GITHUB_TOKEN: ${{github.token}}
       - if: steps.merge_dmz_in_master.outputs.status != 201
