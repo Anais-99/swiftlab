@@ -1,8 +1,0 @@
-language: swift
-osx_image: xcode12.2
-xcode_project: SwiftLab.xcodeproj # path to your xcodeproj folder
-xcode_scheme: SwiftLabTests
-xcode_destination: platform=macOS
-script:
-  - set -o pipefail && xcodebuild -scheme SwiftLabTests test | xcpretty
-  - set -o pipefail && xcodebuild -scheme SwiftLabUITests test | xcpretty

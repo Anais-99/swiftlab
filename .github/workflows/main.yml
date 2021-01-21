@@ -1,14 +1,30 @@
 on: push
 
+defaults:
+  runs-on: macos-10.15
+
+env:
+  XCODE_PATH: /Applications/Xcode_12.2.app
+
 jobs:
   build:
     strategy:
       matrix:
-        os: [macos-10.15, macos-11.0]
-    runs-on: ${{ matrix.os }}
+        build-config:
+          - { scheme: SwiftLab, destination: 'platform=macOS' }
     steps:
       - uses: actions/checkout@v2
-      - run: ls -l /Applications
-      - run: sudo xcode-select -s /Applications/Xcode_12.2.app
-      - run: set -o pipefail && xcodebuild test -scheme SwiftLabTests | xcpretty
-      - run: set -o pipefail && xcodebuild test -scheme SwiftLabUITests | xcpretty
+      - run: sudo xcode-select -s $XCODE_PATH
+      - run: xcode-select -p
+      - run: set -o pipefail && xcodebuild clean build -scheme '${{ matrix.build-config.scheme }}' -destination ${{ matrix.build-config.destination }} | xcpretty
+  test:
+    strategy:
+      matrix:
+        test-config:
+          - { scheme: SwiftLabTests, destination: 'platform=macOS' }
+          - { scheme: SwiftLabUITests, destination: 'platform=macOS' }
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo xcode-select -s $XCODE_PATH
+      - run: xcode-select -p
+      - run: set -o pipefail && xcodebuild clean test -scheme '${{ matrix.test-config.scheme }}' -destination ${{ matrix.test-config.destination }} | xcpretty
