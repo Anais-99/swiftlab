@@ -41,6 +41,6 @@ jobs:
           name: DMZ merge
           head_sha: ${{fromJSON(steps.merge_dmz_in_master.outputs.data).sha}}
           status: completed
-          #completed_at: ${{fromJSON(steps.merge_dmz_in_master.outputs.data).commit.committer.date}}
+          conclusion: success
         env:
           GITHUB_TOKEN: ${{github.token}}
