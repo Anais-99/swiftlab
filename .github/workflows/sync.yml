@@ -1,0 +1,17 @@
+name: Sync
+on:
+  schedule:
+    - cron: 0 0 * * *
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{secrets.SYNC_PRIVATE_KEY}}
+      - run: git remote remove sync || true
+      - run: git remote add --mirror=push sync ${{secrets.SYNC_REMOTE}}
+      - run: git push sync
