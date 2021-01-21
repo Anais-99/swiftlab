@@ -5,6 +5,7 @@ env:
 
 jobs:
   test:
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/dmz'
     runs-on: macos-10.15
     strategy:
       fail-fast: false
@@ -24,9 +25,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: devmasx/merge-branch@v1.3.1
+      - uses: octokit/request-action@v2.x
+        id: merge_dmz_in_master
         with:
-          type: now
-          from_branch: dmz
-          target_branch: master
-          github_token: ${{ github.token }}
+          route: POST /repos/{repo_path}/merges
+          repo_path: ${{github.repository}}
+          base: master
+          head: dmz
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+      - if: steps.merge_dmz_in_master.outputs.status != 201
+        run: echo "::error::Merge failed" && exit 1
+      - uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/{repo_path}/check-runs
+          repo_path: ${{github.repository}}
+          name: DMZ merge
+          head_sha: ${{fromJSON(steps.merge_dmz_in_master.outputs.data).sha}}
+        env:
+          GITHUB_TOKEN: ${{github.token}}
