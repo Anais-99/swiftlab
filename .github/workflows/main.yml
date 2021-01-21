@@ -19,8 +19,9 @@ jobs:
       - run: set -o pipefail && xcodebuild test -scheme '${{ matrix.test-config.scheme }}' -destination '${{ matrix.test-config.destination }}' | xcpretty
 
   dmz:
-    if: github.event_name == push && github.ref == 'refs/heads/dmz'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dmz'
     needs: test
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: devmasx/merge-branch@v1.3.1
