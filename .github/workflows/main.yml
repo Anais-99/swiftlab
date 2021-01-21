@@ -35,7 +35,6 @@ jobs:
           GITHUB_TOKEN: ${{github.token}}
       - if: steps.merge_dmz_in_master.outputs.status != 201
         run: echo "::error::Merge failed" && exit 1
-      - run: echo "::debug::${{steps.merge_dmz_in_master.outputs.data}}"
       - uses: octokit/request-action@v2.x
         with:
           route: POST /repos/${{github.repository}}/check-runs
