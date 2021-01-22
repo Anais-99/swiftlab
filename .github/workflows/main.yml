@@ -32,18 +32,28 @@ jobs:
     # Only runs on a push (or merge) on dmz.
     if: github.event_name == 'push' && github.ref == 'refs/heads/dmz'
     # The tests must pass in order to keep master working.
-    #needs: test
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      # GitHub API call for merge.
+      - uses: octokit/request-action@v2.x
+        id: merge_dmz_in_master
         with:
-          ref: master
-      - run: |
-          git fetch --unshallow origin master
-          git fetch origin dmz
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-      - run: |
-          git merge --squash ${{github.sha}}
-          git commit -m "$(git log --format=%B -n 1 ${{github.sha}})" || true
-      - run: git push origin master
+          route: POST /repos/${{github.repository}}/merges
+          base: master
+          head: dmz
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+      - if: steps.merge_dmz_in_master.outputs.status != 201
+        run: echo "::error::Merge failed" && exit 1
+      # GitHub API call to add a successfull check on master.
+      - uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/${{github.repository}}/check-runs
+          name: DMZ merge
+          head_sha: ${{fromJSON(steps.merge_dmz_in_master.outputs.data).sha}}
+          status: completed
+          conclusion: success
+        env:
+          GITHUB_TOKEN: ${{github.token}}
