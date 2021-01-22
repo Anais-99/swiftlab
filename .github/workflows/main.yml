@@ -45,6 +45,5 @@ jobs:
           git config user.email github-actions@github.com
       - run: |
           git merge --squash ${{github.sha}}
-          git status
           git commit -m "$(git log --format=%B -n 1 ${{github.sha}})" || true
       - run: git push origin master
