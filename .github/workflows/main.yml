@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: get_commit_message
-        run: echo "::set-output name=MESSAGE::<<EOF$(git log --format=%B -n 1 ${{github.sha}})EOF"
+        run: echo "::set-output name=MESSAGE::$(git log --format=%B -n 1 ${{github.sha}})"
       # GitHub API call for merge.
       - uses: octokit/request-action@v2.x
         id: merge_dmz_in_master
@@ -45,7 +45,7 @@ jobs:
           route: POST /repos/${{github.repository}}/merges
           base: master
           head: ${{github.sha}}
-          commit_message: ${{steps.get_commit_message.MESSAGE}}
+          commit_message: ${{steps.get_commit_message.outputs.MESSAGE}}
         env:
           GITHUB_TOKEN: ${{github.token}}
       - if: steps.merge_dmz_in_master.outputs.status != 201 && steps.merge_dmz_in_master.outputs.status != 204
