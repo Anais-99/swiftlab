@@ -48,7 +48,7 @@ jobs:
           commit_message: ${{steps.get_commit_message.message}}
         env:
           GITHUB_TOKEN: ${{github.token}}
-      - if: ! contains('201204', steps.merge_dmz_in_master.outputs.status)
+      - if: steps.merge_dmz_in_master.outputs.status != 201 && steps.merge_dmz_in_master.outputs.status != 204
         run: echo "::error::Merge failed" && exit 1
       # GitHub API call to add a successfull check on master.
       - if: steps.merge_dmz_in_master.outputs.status == 201
