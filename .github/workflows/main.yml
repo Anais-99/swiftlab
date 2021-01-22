@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: get_commit_message
-        run: echo "::set-output name=message::$(git log --format=%B -n 1 ${{github.sha}})"
+        run: echo "::set-output name=MESSAGE::<<EOF$(git log --format=%B -n 1 ${{github.sha}})EOF"
       # GitHub API call for merge.
       - uses: octokit/request-action@v2.x
         id: merge_dmz_in_master
@@ -48,10 +48,11 @@ jobs:
           commit_message: ${{steps.get_commit_message.message}}
         env:
           GITHUB_TOKEN: ${{github.token}}
-      - if: steps.merge_dmz_in_master.outputs.status != 201
+      - if: ! contains('201204', steps.merge_dmz_in_master.outputs.status)
         run: echo "::error::Merge failed" && exit 1
       # GitHub API call to add a successfull check on master.
-      - uses: octokit/request-action@v2.x
+      - if: steps.merge_dmz_in_master.outputs.status == 201
+        uses: octokit/request-action@v2.x
         with:
           route: POST /repos/${{github.repository}}/check-runs
           name: DMZ merge
