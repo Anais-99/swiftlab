@@ -42,7 +42,8 @@ jobs:
         with:
           route: POST /repos/${{github.repository}}/merges
           base: master
-          head: dmz
+          head: ${{github.sha}}
+          commit_message: $(git log --format=%B -n 1 ${{github.sha}})
         env:
           GITHUB_TOKEN: ${{github.token}}
       - if: steps.merge_dmz_in_master.outputs.status != 201
