@@ -37,6 +37,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: master
+      - run: git fetch origin master
       - run: git fetch origin dmz
       - run: git merge --squash ${{github.sha}}
       - run: git commit -m "$(git log --format=%B -n 1 ${{github.sha}})" || true
