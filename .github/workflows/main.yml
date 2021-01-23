@@ -38,6 +38,12 @@ jobs:
       - uses: actions/checkout@v2
       - id: get_commit_message
         run: echo "::set-output name=MESSAGE::$(git log --format=%B -n 1 ${{github.sha}})"
+      # GitHub API call disabling master branch security for merging.
+      - uses: octokit/request-action@v2.x
+        with:
+          route: DELETE /repos/${{github.repository}}/branches/master/protection/required_pull_request_reviews
+        env:
+          GITHUB_TOKEN: ${{github.token}}
       # GitHub API call for merge.
       - uses: octokit/request-action@v2.x
         id: merge_dmz_in_master
@@ -46,6 +52,14 @@ jobs:
           base: master
           head: ${{github.sha}}
           commit_message: ${{steps.get_commit_message.outputs.MESSAGE}}
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+      # GitHub API call enabling master branch security after merging.
+      - if: always()
+        uses: octokit/request-action@v2.x
+        with:
+          route: PATCH /repos/${{github.repository}}/branches/master/protection/required_pull_request_reviews
+          dismiss_stale_reviews: true
         env:
           GITHUB_TOKEN: ${{github.token}}
       - if: steps.merge_dmz_in_master.outputs.status != 201 && steps.merge_dmz_in_master.outputs.status != 204
