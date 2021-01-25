@@ -20,11 +20,11 @@ class SwiftLabTests: XCTestCase {
     }
 
     func testExample() throws {
-        let a = 1
-        let b = 1
+        var a = 1
+        var b = 3
 
 
-        XCTAssertEqual(a + b, 2)
+        XCTAssertEqual(a + b, 4)
     }
 
     func testPerformanceExample() throws {
